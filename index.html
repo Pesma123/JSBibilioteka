@@ -278,8 +278,7 @@
                 confirmButtonText: 'Da, obriši!'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    // Implementirati logiku za brisanje korisnika
-                    // Ovo može uključivati ažuriranje UI-a, slanje AJAX zahteva itd.
+                   
                     
                     // Uklanjanje korisnika iz liste
                     const listItem = event.target.closest('.list-group-item');
@@ -336,7 +335,7 @@
                 bookListItem.innerHTML = `${bookTitle} - ${inventoryNumber}`;
                 document.getElementById('bookList').appendChild(bookListItem);
 
-                // Opciono: Prikazivanje poruke o uspešnom dodavanju
+               
                 Swal.fire({
                     icon: 'success',
                     title: 'Knjiga uspešno dodana!',
