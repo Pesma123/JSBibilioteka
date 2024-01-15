@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library</title>
+  
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+   
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+    
+</head>
+<body>
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-6">
+            <h2>Korisnici</h2>
+            <ul id="userList" class="list-group">
+                <!-- Popuniti dinamički korisnike -->
+            </ul>
+            <!-- Dugme za dodavanje korisnika ispod naslova "Korisnici" -->
+            <button type="button" class="btn btn-primary mt-2" data-toggle="modal" data-target="#addUserModal">
+                Dodaj korisnika
+            </button>
+        </div>
+        <div class="col-md-6">
+            <h2>Knjige</h2>
+            <ul id="bookList" class="list-group">
+                <!-- Popuniti dinamički knjige -->
+            </ul>
+            <!-- Dugme za dodavanje knjige ispod naslova "Knjige" -->
+            <button type="button" class="btn btn-success mt-2" data-toggle="modal" data-target="#addBookModal">
+                Dodaj knjigu
+            </button>
+        </div>
+    </div>
+</div>
+
+
+<!-- Dodaj korisnika modal -->
+<div class="modal" id="addUserModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Dodaj korisnika</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Forma za unos podataka korisnika -->
+                <form id="userForm">
+                    <div class="form-group">
+                        <label for="name">Ime:</label>
+                        <input type="text" class="form-control" id="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="lastName">Prezime:</label>
+                        <input type="text" class="form-control" id="lastName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="gender">Spol:</label>
+                        <select class="form-control" id="gender" required>
+                            <option value="male">Muški</option>
+                            <option value="female">Ženski</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="membershipStart">Datum učlanjenja:</label>
+                        <input type="text" class="form-control datepicker" id="membershipStart" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="membershipEnd">Datum isteka članarine:</label>
+                        <input type="text" class="form-control datepicker" id="membershipEnd" required>
+                    </div>
+                    <!-- Dodati ostala polja za unos -->
+                    <button type="submit" class="btn btn-primary">Dodaj</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Dodaj knjigu modal-->
+
+
+<!-- Prozor za prikazivanje i uređivanje korisnika -->
+<div class="modal" id="viewEditUserModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Pregled i uređivanje korisnika</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Forma za pregled i uređivanje podataka korisnika -->
+                <form id="viewEditUserForm">
+                    <div class="form-group">
+                        <label for="viewEditName">Ime:</label>
+                        <input type="text" class="form-control" id="viewEditName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="viewEditLastName">Prezime:</label>
+                        <input type="text" class="form-control" id="viewEditLastName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="viewEditGender">Spol:</label>
+                        <select class="form-control" id="viewEditGender" required>
+                            <option value="male">Muški</option>
+                            <option value="female">Ženski</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="viewEditMembershipStart">Datum učlanjenja:</label>
+                        <input type="text" class="form-control datepicker" id="viewEditMembershipStart" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="viewEditMembershipEnd">Datum isteka članarine:</label>
+                        <input type="text" class="form-control datepicker" id="viewEditMembershipEnd" required>
+                    </div>
+                    <!-- Dodati ostala polja za unos -->
+                    <button type="button" class="btn btn-success" id="saveEditUserBtn">Sačuvaj promene</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+   
+    document.addEventListener('DOMContentLoaded', function () {
+        // Inicijalizacija datepickera
+        $('.datepicker').datepicker({
+            format: 'dd/mm/yyyy',
+            autoclose: true
+        });
+
+        const userForm = document.getElementById('userForm');
+        const userList = document.getElementById('userList');
+        const viewEditUserModal = $('#viewEditUserModal');
+        const viewEditUserForm = document.getElementById('viewEditUserForm');
+        const saveEditUserBtn = document.getElementById('saveEditUserBtn');
+
+        userForm.addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            //Dobijanje  iz forme
+            const name = document.getElementById('name').value;
+            const lastName = document.getElementById('lastName').value;
+            const gender = document.getElementById('gender').value;
+            const membershipStart = document.getElementById('membershipStart').value;
+            const membershipEnd = document.getElementById('membershipEnd').value;
+
+            // Kreiranje novog korisnika
+            const newUser = {
+                id: new Date().getTime(),
+                name: name,
+                lastName: lastName,
+                gender: gender,
+                membershipStart: membershipStart,
+                membershipEnd: membershipEnd,
+                
+            };
+
+            // Dodavanje korisnika u listu
+            const listItem = document.createElement('li');
+            listItem.className = 'list-group-item d-flex justify-content-between align-items-center';
+            listItem.innerHTML = `${newUser.id} - ${newUser.name} ${newUser.lastName}
+                           <span class="badge badge-primary badge-pill view-user" 
+                                 data-id="${newUser.id}" 
+                                 data-name="${newUser.name}" 
+                                 data-lastname="${newUser.lastName}" 
+                                 data-gender="${newUser.gender}" 
+                                 data-membershipstart="${newUser.membershipStart}" 
+                                 data-membershipend="${newUser.membershipEnd}">&#128065;</span>
+                           <span class="badge badge-warning badge-pill edit-user" data-id="${newUser.id}">&#9998;</span>
+                           <span class="badge badge-danger badge-pill delete-user" data-id="${newUser.id}">&#128465;</span>`;
+            userList.appendChild(listItem);
+
+            // Zatvaranje moda nakon dodavanja korisnika
+            $('#addUserModal').modal('hide');
+
+            // Resetovanje forme
+            userForm.reset();
+
+            // Opciono: Prikazivanje notifikacije o uspešnom dodavanju
+            Swal.fire({
+                icon: 'success',
+                title: 'Korisnik uspešno dodat!',
+                showConfirmButton: false,
+                timer: 1500
+            });
+        });
+        
+        
+        // Dodavanje event listener-a za dugme "Čitaj" (prikazivanje podataka o korisniku)
+    userList.addEventListener('click', function (event) {
+        if (event.target.classList.contains('view-user')) {
+            const userId = event.target.dataset.id;
+            const userName = event.target.dataset.name;
+            const userLastName = event.target.dataset.lastname;
+            const userGender = event.target.dataset.gender;
+            const userMembershipStart = event.target.dataset.membershipstart;
+            const userMembershipEnd = event.target.dataset.membershipend;
+
+            // Prikazivanje podataka o korisniku (modal)
+            Swal.fire({
+                title: `Podaci o korisniku ${userId}`,
+                html: `
+                    <p><strong>Ime:</strong> ${userName}</p>
+                    <p><strong>Prezime:</strong> ${userLastName}</p>
+                    <p><strong>Spol:</strong> ${userGender}</p>
+                    <p><strong>Datum učlanjenja:</strong> ${userMembershipStart}</p>
+                    <p><strong>Datum isteka članarine:</strong> ${userMembershipEnd}</p>
+                    <!-- Dodati ostale podatke o korisniku -->
+                `,
+                icon: 'info',
+            });
+        }
+    });
+    
+    
+    
+    //event-listener za UREDI
+    userList.addEventListener('click', function (event) {
+        if (event.target.classList.contains('edit-user')) {
+            const userId = event.target.dataset.id;
+
+            // Dobijanje roditeljskog elementa
+            const listItem = event.target.closest('.list-group-item');
+            
+            // Provera da li smo pronašli roditeljski element
+            if (listItem) {
+                // Dohvatanje podataka iz roditeljskog elementa
+                const userName = listItem.dataset.name;
+                const userLastName = listItem.dataset.lastname;
+                const userGender = listItem.dataset.gender;
+                const userMembershipStart = listItem.dataset.membershipstart;
+                const userMembershipEnd = listItem.dataset.membershipend;
+
+                // Postavljanje podataka u modal za uređivanje
+                document.getElementById('viewEditName').value = userName;
+                document.getElementById('viewEditLastName').value = userLastName;
+                document.getElementById('viewEditGender').value = userGender;
+                document.getElementById('viewEditMembershipStart').value = userMembershipStart;
+                document.getElementById('viewEditMembershipEnd').value = userMembershipEnd;
+
+                // Otvaranje moda za uređivanje
+                $('#viewEditUserModal').modal('show');
+            }
+        }
+    });
+
+//Obrisi
+
+    userList.addEventListener('click', function (event) {
+        if (event.target.classList.contains('delete-user')) {
+            const userId = event.target.dataset.id;
+
+            // Prikazivanje modalnog prozora za potvrdu brisanja
+            Swal.fire({
+                title: 'Jeste li sigurni?',
+                text: 'Obrisani podaci se ne mogu povratiti!',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Da, obriši!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Implementirati logiku za brisanje korisnika
+                    // Ovo može uključivati ažuriranje UI-a, slanje AJAX zahteva itd.
+                    
+                    // Uklanjanje korisnika iz liste
+                    const listItem = event.target.closest('.list-group-item');
+                    if (listItem) {
+                        listItem.remove();
+                    }
+
+                    // Prikazivanje poruke o uspešnom brisanju
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Korisnik uspešno obrisan!',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                }
+            });
+        }
+    });
+});
+
+
+
+
+
+    // Dohvatanje dugmeta Dodaj Knjigu
+    const addBookButton = document.getElementById('addBookButton');
+
+    // Dodavanje event listener-a za klik na dugme Dodaj Knjigu
+    addBookButton.addEventListener('click', function () {
+        Swal.fire({
+            title: 'Dodaj knjigu',
+            html:
+                '<input id="swal-input1" class="swal2-input" placeholder="Inventarni broj">' +
+                '<input id="swal-input2" class="swal2-input" placeholder="Naziv knjige">' +
+                '<input id="swal-input3" class="swal2-input" placeholder="Ime autora">' +
+                '<input id="swal-input4" class="swal2-input" placeholder="Godina izdavanja">' +
+                '<input id="swal-input5" class="swal2-input" placeholder="Mjesto izdavanja">' +
+                '<input id="swal-input6" class="swal2-input" placeholder="Izdavač">',
+            showCancelButton: true,
+            confirmButtonText: 'Dodaj',
+            cancelButtonText: 'Odustani',
+            focusConfirm: false,
+            preConfirm: () => {
+                const inventoryNumber = Swal.getPopup().querySelector('#swal-input1').value;
+                const bookTitle = Swal.getPopup().querySelector('#swal-input2').value;
+                const authorName = Swal.getPopup().querySelector('#swal-input3').value;
+                const publishingYear = Swal.getPopup().querySelector('#swal-input4').value;
+                const publishingPlace = Swal.getPopup().querySelector('#swal-input5').value;
+                const publisher = Swal.getPopup().querySelector('#swal-input6').value;
+
+                // Ovde možete implementirati dodavanje knjige na stranicu
+                const bookListItem = document.createElement('li');
+                bookListItem.className = 'list-group-item';
+                bookListItem.innerHTML = `${bookTitle} - ${inventoryNumber}`;
+                document.getElementById('bookList').appendChild(bookListItem);
+
+                // Opciono: Prikazivanje poruke o uspešnom dodavanju
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Knjiga uspešno dodana!',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            }
+        });
+    });
+
+
+
+
+
+</script>
+</body>
+</html>
+
