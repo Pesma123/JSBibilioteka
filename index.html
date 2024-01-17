@@ -23,7 +23,6 @@
         <div class="col-md-6">
             <h2>Korisnici</h2>
             <ul id="userList" class="list-group">
-                <!-- Popuniti dinamički korisnike -->
             </ul>
             <!-- Dugme za dodavanje korisnika ispod naslova "Korisnici" -->
             <button type="button" class="btn btn-primary mt-2" data-toggle="modal" data-target="#addUserModal">
@@ -32,13 +31,56 @@
         </div>
         <div class="col-md-6">
             <h2>Knjige</h2>
-            <ul id="bookList" class="list-group">
-                <!-- Popuniti dinamički knjige -->
+            <ul id="bookList" class="list-group"> 
             </ul>
             <!-- Dugme za dodavanje knjige ispod naslova "Knjige" -->
             <button type="button" class="btn btn-success mt-2" data-toggle="modal" data-target="#addBookModal">
                 Dodaj knjigu
             </button>
+        </div>
+    </div>
+</div>
+
+<!-- Dodaj knjigu modal -->
+<div class="modal" id="addBookModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Dodaj knjigu</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Forma za unos podataka knjige -->
+                <form id="bookForm">
+                    <div class="form-group">
+                        <label for="inventoryNumber">Inventarni broj:</label>
+                        <input type="text" class="form-control" id="inventoryNumber" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="bookTitle">Naziv knjige:</label>
+                        <input type="text" class="form-control" id="bookTitle" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="authorName">Ime autora:</label>
+                        <input type="text" class="form-control" id="authorName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="publishingYear">Godina izdavanja:</label>
+                        <input type="text" class="form-control" id="publishingYear" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="publishingPlace">Mjesto izdavanja:</label>
+                        <input type="text" class="form-control" id="publishingPlace" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="publisher">Izdavač:</label>
+                        <input type="text" class="form-control" id="publisher" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Dodaj</button>
+                </form>
+            </div>
         </div>
     </div>
 </div>
@@ -88,8 +130,6 @@
     </div>
 </div>
 
-<!--Dodaj knjigu modal-->
-
 
 <!-- Prozor za prikazivanje i uređivanje korisnika -->
 <div class="modal" id="viewEditUserModal" tabindex="-1" role="dialog">
@@ -136,9 +176,7 @@
 </div>
 
 <script>
-
-   
-    document.addEventListener('DOMContentLoaded', function () {
+  document.addEventListener('DOMContentLoaded', function () {
         // Inicijalizacija datepickera
         $('.datepicker').datepicker({
             format: 'dd/mm/yyyy',
@@ -201,6 +239,50 @@
                 timer: 1500
             });
         });
+        bookForm.addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        // Dohvatanje podataka iz forme za knjigu
+        const inventoryNumber = document.getElementById('inventoryNumber').value;
+        const bookTitle = document.getElementById('bookTitle').value;
+        const authorName = document.getElementById('authorName').value;
+        const publishingYear = document.getElementById('publishingYear').value;
+        const publishingPlace = document.getElementById('publishingPlace').value;
+        const publisher = document.getElementById('publisher').value;
+
+        // Kreiranje nove knjige
+        const newBook = {
+            inventoryNumber: inventoryNumber,
+            bookTitle: bookTitle,
+            authorName: authorName,
+            publishingYear: publishingYear,
+            publishingPlace: publishingPlace,
+            publisher: publisher,
+        };
+
+        // Dodavanje knjige u listu
+        const listItem = document.createElement('li');
+        listItem.className = 'list-group-item';
+        listItem.innerHTML = `<strong>${newBook.bookTitle}</strong> - ${newBook.inventoryNumber}`;
+        bookList.appendChild(listItem);
+
+       
+
+        // Zatvaranje moda nakon dodavanja knjige
+        $('#addBookModal').modal('hide');
+
+        // Resetovanje forme
+        bookForm.reset();
+
+        // Opciono: Prikazivanje notifikacije o uspešnom dodavanju
+        Swal.fire({
+            icon: 'success',
+            title: 'Knjiga uspešno dodana!',
+            showConfirmButton: false,
+            timer: 1500
+        });
+    });
+
         
         
         // Dodavanje event listener-a za dugme "Čitaj" (prikazivanje podataka o korisniku)
@@ -307,45 +389,6 @@
     // Dohvatanje dugmeta Dodaj Knjigu
     const addBookButton = document.getElementById('addBookButton');
 
-    // Dodavanje event listener-a za klik na dugme Dodaj Knjigu
-    addBookButton.addEventListener('click', function () {
-        Swal.fire({
-            title: 'Dodaj knjigu',
-            html:
-                '<input id="swal-input1" class="swal2-input" placeholder="Inventarni broj">' +
-                '<input id="swal-input2" class="swal2-input" placeholder="Naziv knjige">' +
-                '<input id="swal-input3" class="swal2-input" placeholder="Ime autora">' +
-                '<input id="swal-input4" class="swal2-input" placeholder="Godina izdavanja">' +
-                '<input id="swal-input5" class="swal2-input" placeholder="Mjesto izdavanja">' +
-                '<input id="swal-input6" class="swal2-input" placeholder="Izdavač">',
-            showCancelButton: true,
-            confirmButtonText: 'Dodaj',
-            cancelButtonText: 'Odustani',
-            focusConfirm: false,
-            preConfirm: () => {
-                const inventoryNumber = Swal.getPopup().querySelector('#swal-input1').value;
-                const bookTitle = Swal.getPopup().querySelector('#swal-input2').value;
-                const authorName = Swal.getPopup().querySelector('#swal-input3').value;
-                const publishingYear = Swal.getPopup().querySelector('#swal-input4').value;
-                const publishingPlace = Swal.getPopup().querySelector('#swal-input5').value;
-                const publisher = Swal.getPopup().querySelector('#swal-input6').value;
-
-                // Ovde možete implementirati dodavanje knjige na stranicu
-                const bookListItem = document.createElement('li');
-                bookListItem.className = 'list-group-item';
-                bookListItem.innerHTML = `${bookTitle} - ${inventoryNumber}`;
-                document.getElementById('bookList').appendChild(bookListItem);
-
-                // Opciono: Prikazivanje poruke o uspešnom dodavanju
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Knjiga uspešno dodana!',
-                    showConfirmButton: false,
-                    timer: 1500
-                });
-            }
-        });
-    });
 
 
 
